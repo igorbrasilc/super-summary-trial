@@ -5,22 +5,45 @@ class MoviesController < ApplicationController
   end
 
   def recommendations
-    favorite_movies = User.find(params[:user_id]).favorites
-    @recommendations = RecommendationEngine.new(favorite_movies).recommendations
-    render json: @recommendations
+    begin  
+      favorite_movies = User.find(params[:user_id]).favorites
+      @recommendations = RecommendationEngine.new(favorite_movies).recommendations
+      render json: @recommendations
+    rescue ActiveRecord::RecordNotFound
+      render json: { error: "User not found" }, status: :not_found
+    end
   end
 
   def user_rented_movies
-    @rented = User.find(params[:user_id]).rented
-    render json: @rented
+    begin
+      @rented = User.find(params[:user_id]).rented
+      render json: @rented
+    rescue ActiveRecord::RecordNotFound
+      render json: { error: "User not found" }, status: :not_found
+    end
   end
 
   def rent
-    user = User.find(params[:user_id])
-    movie = Movie.find(params[:id])
-    movie.available_copies -= 1
-    movie.save
-    user.rented << movie
-    render json: movie
+    begin
+      user = User.find(params[:user_id])
+      movie = Movie.find(params[:id])
+      
+      if movie.available_copies > 0 && !user.rented.include?(movie)
+        movie.available_copies -= 1
+        movie.save
+        user.rented << movie
+        render json: movie
+      else
+        error_message = if user.rented.include?(movie)
+          "User has already rented this movie"
+        else
+          "No copies available"
+        end
+        render json: { error: error_message }, status: :unprocessable_entity
+      end
+    rescue ActiveRecord::RecordNotFound => e
+      error_message = e.model == "User" ? "User not found" : "Movie not found"
+      render json: { error: error_message }, status: :not_found
+    end
   end
 end

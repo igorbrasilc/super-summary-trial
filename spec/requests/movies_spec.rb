@@ -79,7 +79,7 @@ RSpec.describe 'Movies API', type: :request, swagger_doc: 'v1/swagger.yaml' do
   end
 
   path '/movies/{id}/rent' do
-    get 'Rent a movie' do
+    post 'Rent a movie' do
       tags ['Movie Rentals']
       description 'Rents a movie for a specific user if copies are available'
       produces 'application/json'

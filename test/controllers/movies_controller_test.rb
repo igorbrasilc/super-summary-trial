@@ -49,7 +49,7 @@ class MoviesFlowTest < ActionDispatch::IntegrationTest
     movie = @movies.last
     initial_copies = movie.available_copies
     
-    get rent_movie_path(id: movie.id, user_id: @user.id)
+    post rent_movie_path(id: movie.id, user_id: @user.id)
     
     assert_response :success
     movie.reload
@@ -60,20 +60,20 @@ class MoviesFlowTest < ActionDispatch::IntegrationTest
   test "cannot rent movie with no copies" do
     movie = @movies.second
     
-    get rent_movie_path(id: movie.id, user_id: @user.id)
+    post rent_movie_path(id: movie.id, user_id: @user.id)
     assert_response :success
     
-    get rent_movie_path(id: movie.id, user_id: @another_user.id)
+    post rent_movie_path(id: movie.id, user_id: @another_user.id)
     assert_response :unprocessable_entity
   end
 
   test "same user cannot rent the same movie without returning it" do
     movie = @movies.second
 
-    get rent_movie_path(id: movie.id, user_id: @user.id)
+    post rent_movie_path(id: movie.id, user_id: @user.id)
     assert_response :success
 
-    get rent_movie_path(id: movie.id, user_id: @user.id)
+    post rent_movie_path(id: movie.id, user_id: @user.id)
     assert_response :unprocessable_entity
   end
 end
