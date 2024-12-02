@@ -1,0 +1,115 @@
+---
+openapi: 3.0.1
+info:
+  title: Movies API V1
+  version: v1
+paths:
+  "/movies":
+    get:
+      summary: List all movies
+      tags:
+        - - Movie Catalog
+      description: Retrieves all movies in the database
+      responses:
+        "200":
+          description: successful
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                  required:
+                    - id
+                    - title
+                    - available_copies
+                    - rating
+  "/movies/recommendations":
+    get:
+      summary: Get movie recommendations for a user
+      tags:
+        - - Movie Recommendations
+      description: Returns personalized movie recommendations based on user favorites
+      parameters:
+        - name: user_id
+          in: query
+          required: true
+          description: ID of the user to get recommendations for
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: recommendations found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                  required:
+                    - id
+                    - title
+  "/movies/user_rented_movies":
+    get:
+      summary: Get movies rented by a user
+      tags:
+        - - Movie Rentals
+      description: Returns all movies currently rented by the specified user
+      parameters:
+        - name: user_id
+          in: query
+          required: true
+          description: ID of the user whose rentals to retrieve
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: rented movies found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                  required:
+                    - id
+                    - title
+  "/movies/{id}/rent":
+    get:
+      summary: Rent a movie
+      tags:
+        - - Movie Rentals
+      description: Rents a movie for a specific user if copies are available
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the movie to rent
+          schema:
+            type: integer
+        - name: user_id
+          in: query
+          required: true
+          description: ID of the user renting the movie
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: movie rented successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                required:
+                  - id
+                  - title
+                  - available_copies
+servers:
+  - url: http://{defaultHost}
+    variables:
+      defaultHost:
+        default: localhost:3000
