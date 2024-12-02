@@ -6,6 +6,10 @@ class MoviesFlowTest < ActionDispatch::IntegrationTest
       name: "Igor"
     )
 
+    @another_user = User.create!(
+        name: "Igor Cópia"
+    )
+
     @movies = [
       Movie.create!(title: "The Matrix", genre: "sci-fi", rating: 9.0, available_copies: 2),
       Movie.create!(title: "Inception", genre: "sci-fi", rating: 8.8, available_copies: 1),
@@ -59,6 +63,16 @@ class MoviesFlowTest < ActionDispatch::IntegrationTest
     get rent_movie_path(id: movie.id, user_id: @user.id)
     assert_response :success
     
+    get rent_movie_path(id: movie.id, user_id: @another_user.id)
+    assert_response :unprocessable_entity
+  end
+
+  test "same user cannot rent the same movie without returning it" do
+    movie = @movies.second
+
+    get rent_movie_path(id: movie.id, user_id: @user.id)
+    assert_response :success
+
     get rent_movie_path(id: movie.id, user_id: @user.id)
     assert_response :unprocessable_entity
   end
