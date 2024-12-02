@@ -78,7 +78,7 @@ paths:
                     - id
                     - title
   "/movies/{id}/rent":
-    get:
+    post:
       summary: Rent a movie
       tags:
         - - Movie Rentals
@@ -109,7 +109,4 @@ paths:
                   - title
                   - available_copies
 servers:
-  - url: http://{defaultHost}
-    variables:
-      defaultHost:
-        default: localhost:3000
+  - url: http://localhost:3000
