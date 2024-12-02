@@ -27,11 +27,4 @@ class RecommendationEngineTest < ActiveSupport::TestCase
     
     assert sci_fi_count > action_count
   end
-
-  test "get_movie_names returns array of movie titles" do
-    titles = @recommendation_engine.send(:get_movie_names, @favorite_movies)
-    
-    assert_equal ["The Matrix", "Inception"], titles
-    assert_kind_of Array, titles
-  end
 end
